@@ -20,3 +20,13 @@ rouge = (255, 0, 0)
 fenetre = pygame.display.set_mode((largeur_fenetre, hauteur_fenetre))
 pygame.display.set_caption("Jeu d'aventure")
 
+#Initialisation du personnage et des obstacles 
+personnage = pygame.Rect(50, hauteur_fenetre // 2 - 15, 30, 30)
+obstacles = [pygame.Rect(random.randint(100, 700), random.randint(0, hateur_fenetre - 30), 30, 30) for _ in range(5)]
+
+#Score
+score = 0
+
+#Tableau des scores
+tableau_scores = []
+
