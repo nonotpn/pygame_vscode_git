@@ -70,5 +70,17 @@ while True:
     #Dessin du jeu 
     fenetre.fill(noir)
     pygame.draw.rect(fenetre, blanc, personnage)
-    for obstacle a
+    for obstacle in obstacles:
+        pygame.draw.rect(fenetre, rouge, obstacle)
+
+    #Affichage du score
+    texte_score = police.render(f"Score: {score}", True, blanc)
+    fenetre.blit(texte_score, (10, 10))
+
+    #Rafraichir l'affichage 
+    pygame .display.flip()
+
+    #Limiter la fréquence d'images pour éviter une exécution trop rapide 
+    pygame.time;Clock().tick(30)
+    
 
