@@ -51,10 +51,24 @@ while True:
     if touches[pygame.K_RIGHT] and personnage.right < largeur_fenetre:
         personnage.x += vitesse_personnage
 
-    #Deplacement desobstacles
+    #Deplacement des obstacles
     for obstacle in obstacles:
         obstacle.x -= vitesse_obstacle
         if obstacle.right < 0:
             obstacle.x = largeur_fenetre
             obstacle.y = random.randint(0, hauteur_fenetre -30)
-            
+
+        #Verification de la collision le personnage
+        if personnage.colliderect(obstacle):
+            print("Collision !")
+            pygame.quit()
+            sys.exit()
+
+    #Augmenter le score en fonction de la distance parcourue 
+            score += vitesse_obstacle
+
+    #Dessin du jeu 
+    fenetre.fill(noir)
+    pygame.draw.rect(fenetre, blanc, personnage)
+    for obstacle a
+
