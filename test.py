@@ -30,3 +30,31 @@ score = 0
 #Tableau des scores
 tableau_scores = []
 
+#Police pour le score
+police = pygame.font.Font(None, 36)
+
+#Boucle principale du jeu 
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    #Deplacement du personnage
+    touches = pygame.key.get_pressed()
+    if touches[pygame.K_UP] and personnage.top > 0:
+        personnage.y -= vitesse_personnage
+    if touches[pygame.K_DOWN] and personnage.bottom < hauteur_fenetre:
+        personnage.y += vitesse_personnage
+    if touches[pygame.K_LEFT] and personnage.left > 0:
+        personnage.x -= vitesse_personnage
+    if touches[pygame.K_RIGHT] and personnage.right < largeur_fenetre:
+        personnage.x += vitesse_personnage
+
+    #Deplacement desobstacles
+    for obstacle in obstacles:
+        obstacle.x -= vitesse_obstacle
+        if obstacle.right < 0:
+            obstacle.x = largeur_fenetre
+            obstacle.y = random.randint(0, hauteur_fenetre -30)
+            
