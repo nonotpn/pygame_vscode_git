@@ -11,7 +11,24 @@ def demarrer_jeu():
     score = 0
     personnage.x = 50
     personnage.y = hauteur_fenetre // 2 - 15
-    obstacles = [pygame.Rect(random.randint(100, 700), random.randint(0, hauteur_fenetre - 30), 30, 30) for _ in range(5)]
+     # Définir la zone sûre autour du personnage (par exemple, un rectangle de 200x200 autour du personnage)
+    zone_sure = pygame.Rect(100, 100, largeur_fenetre - 200, hauteur_fenetre - 200)
+
+    # Générer les obstacles en évitant la zone sûre
+    obstacles = []
+    for _ in range(5):
+        x = random.randint(100, 700)
+        y = random.randint(0, hauteur_fenetre - 30)
+        obstacle_rect = pygame.Rect(x, y, 100, 100)
+        
+        # Vérifier si l'obstacle est dans la zone sûre, ajuster si nécessaire
+        while obstacle_rect.colliderect(zone_sure):
+            x = random.randint(100, 700)
+            y = random.randint(0, hauteur_fenetre - 30)
+            obstacle_rect = pygame.Rect(x, y, 100, 100)
+
+        obstacles.append((obstacle_rect, obstacle_image))
+delai_obstacle = 5
 
 # Paramètres du jeu
 largeur_fenetre = 1200
@@ -32,12 +49,18 @@ pygame.display.set_caption("Jeu d'aventure")
 
 # Chargement de l'image du personnage
 personnage_image = pygame.image.load ("d:/pygame/sprites/plane.png")
+personnage_image = pygame.transform.scale(personnage_image, (100, 100))  # Redimensionner si nécessaire
 personnage_rect = personnage_image.get_rect()
 personnage_rect.topleft = (50, hauteur_fenetre // 2 - 15)
 
+# Chargez les images des sprites d'obstacles
+obstacle_image = pygame.image.load("d:/pygame/sprites/sprite_fire.png")
+# Redimensionnez les sprites si nécessaire
+obstacle_image = pygame.transform.scale(obstacle_image, (100, 100))  # Ajustez la taille selon vos besoins
+
 # Initialisation du personnage et des obstacles
 personnage = pygame.Rect(50, hauteur_fenetre // 2 - 15, 30, 30)
-obstacles = [pygame.Rect(random.randint(100, 700), random.randint(0, hauteur_fenetre - 30), 30, 30) for _ in range(5)]
+obstacles = [(pygame.Rect(random.randint(100, 700), random.randint(0, hauteur_fenetre - 30), 100, 100),obstacle_image) for _ in range(5)]
 
 # Score
 score = 0
@@ -49,7 +72,7 @@ police = pygame.font.Font(None, 36)
 # État du jeu
 en_jeu = False
 
-sprite_animation = pygame.image.load("d:/pygame/sprites/sprite_background.jpg")
+sprite_animation = pygame.image.load("d:/pygame/sprites/sprite_background2.jpg")
 # Redimensionner l'image du sprite
 nouvelle_taille = (sprite_animation.get_width() * 2, sprite_animation.get_height() * 2)
 sprite_animation = pygame.transform.scale(sprite_animation, nouvelle_taille)
@@ -67,26 +90,31 @@ while True:
        
         # Déplacement du personnage
         touches = pygame.key.get_pressed()
-        if touches[pygame.K_UP] and personnage.top > 0:
-            personnage.y -= vitesse_personnage
-        if touches[pygame.K_DOWN] and personnage.bottom < hauteur_fenetre:
-            personnage.y += vitesse_personnage
-        if touches[pygame.K_LEFT] and personnage.left > 0:
-            personnage.x -= vitesse_personnage
-        if touches[pygame.K_RIGHT] and personnage.right < largeur_fenetre:
-            personnage.x += vitesse_personnage
+        if touches[pygame.K_UP] and personnage_rect.top > 0:
+            personnage_rect.y -= vitesse_personnage
+        if touches[pygame.K_DOWN] and personnage_rect.bottom < hauteur_fenetre:
+            personnage_rect.y += vitesse_personnage
+        if touches[pygame.K_LEFT] and personnage_rect.left > 0:
+            personnage_rect.x -= vitesse_personnage
+        if touches[pygame.K_RIGHT] and personnage_rect.right < largeur_fenetre:
+            personnage_rect.x += vitesse_personnage
+
+        # Gestion du délai avant le démarrage des obstacles
+        if delai_obstacle > 0:
+           delai_obstacle -= 1
+        else:
 
         # Déplacement des obstacles
-        for obstacle in obstacles:
-            obstacle.x -= vitesse_obstacle
-            if obstacle.right < 0:
-                obstacle.x = largeur_fenetre
-                obstacle.y = random.randint(0, hauteur_fenetre - 30)
+             for obstacle, _ in obstacles:
+                 obstacle.x -= vitesse_obstacle
+                 if obstacle.right < 0:
+                    obstacle.x = largeur_fenetre
+                    obstacle.y = random.randint(0, hauteur_fenetre - 30)
 
             # Vérification de la collision avec le personnage
-            if personnage.colliderect(obstacle):
-                print("Collision !")
-                demarrer_jeu()
+                 if personnage_rect.colliderect(obstacle):
+                     print("Collision !")
+                     demarrer_jeu()
 
         # Augmenter le score en fonction de la distance parcourue
         score += vitesse_obstacle
@@ -95,12 +123,13 @@ while True:
 
         # Dessin du jeu
         fenetre.fill(noir)
-         # Afficher le sprite qui tourne en boucle pour le jeu en cours
+        # Afficher le sprite de fond
         fenetre.blit(sprite_animation, sprite_animation_rect)
+        # Afficher le personnage
         fenetre.blit(personnage_image, personnage_rect)
-        pygame.draw.rect(fenetre, blanc, personnage)
+
         for obstacle in obstacles:
-            pygame.draw.rect(fenetre, rouge, obstacle)
+           fenetre.blit(obstacle[1], obstacle[0])
 
  
 
